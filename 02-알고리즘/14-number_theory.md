@@ -46,3 +46,31 @@ vector<int> factorSimple(int n) {
 	return ret;
 }
 ~~~
+소수를 미리 알아서 소수만 시도할 순 없을까?
+
+
+#### 에라토스테네스의 체(Sieve of Eratosthenes)
+- 1보다 큰 자연수를 모두 적어 놓고, 수들을 순회하며 배수를 지워나가는 방법
+
+~~~
+// 소수를 구하려는 범위의 최댓값
+int n;
+// 소수 여부 저장
+bool isPrime[MAX_N+1];
+void erathosthenes() {
+	// true로 초기화
+	memset(isPrime, true);
+	// 예외처리
+	isPrime[0] = isPrime[1] = false;
+	int sqrtn = sqrt(n);
+	for(int i = 2; i < sqrtn; i++) {
+		// 지워지지 않았다면
+		if(isPrime[i]) {
+			// 배수 모두 지우기
+			for(int j = i*i; j <= n; j += i) {
+				isPrime[j] = false;
+			}
+		}
+	}
+}
+~~~
