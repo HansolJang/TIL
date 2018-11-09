@@ -1,6 +1,8 @@
 # Big-O
+- **알고리즘의 러닝타임을 재기위한 것이 아니다**
 - 데이터나 사용자의 증가에 따른 알고리즘 성능 예측
 - 상수는 모두 O(1)
+- 상수는 과감히 버린다(
 
 ### O(1)
 - 언제나 일정한 속도로 수행
@@ -46,10 +48,15 @@ fun print(n: Array<Int>, m: Array<Int>) {
 }
 ~~~
 
-### O(2^n)
+### O(n^3)
 - cubic 3차원 육면체형 데이터
 - 3중 반복문
 - 수행시간에 수가 커질수록 급격히 늘어남
+
+### O(2^n)
+- 함수를 호출할 때마다 2번씩 더 호출해야하는 경우
+- 피보나치
+- O(n^3)보다 시간이 더 급격히 늘어난다
 
 ~~~
 fun (n, r) {
@@ -58,3 +65,21 @@ fun (n, r) {
 	return r[n] = fun (n-1, r) + f(n - 2,r)
 }
 ~~~
+
+### O(log n)
+- 데이터의 양이 1/2씩 줄어드는 연산
+- 이진검색
+
+~~~
+fun binarySearch(start: Int, end: Int, k: Int): Int {
+	if(start > end) return -1
+	val mid = (start + end) / 2
+	if(arr[mid] == k) return m
+	else if(arr[mid] > k) return binarySearch(start, mid - 1, k)
+	else return binarySearch(mid + 1, end, k)
+}
+~~~
+
+### O(sqrtn)
+- 데이터의 양이 제곱근으로 줄어드는 연산
+- 정사각형 매트릭스에서 한 행만 남기는 연산 등
