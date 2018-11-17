@@ -43,3 +43,61 @@
 - 힙을 이용한 정렬
 - remove를 n번 하면 정렬이 된다! -> O(NlogN)
 - 하나씩 remove하면서 그 원소를 제일 마지막에 위치하면 정렬된 배열을 결과로 가질 수 있다 -> 추가 메모리 공간이 필요 없다!
+
+
+~~~
+#include <cstdio>
+#include <vector>
+#include <algorithm>
+using namespace std;
+#define INVALID -1
+
+vector<int> heap;
+
+int getRoot(int i) {
+	if(i == 0) return INVALID;
+	return (i - 1) / 2;
+}
+
+int getLeftChild(int i) {
+	return 2 * i + 1;
+}
+
+int getRightChild(int i) {
+	return 2 * i + 2;
+}
+
+void heapInsert(int num) {
+	heap.push_back(num);
+	int idx = heap.size() - 1;
+	// 부모와 자리 바꿀 수 있으면 바꾸기
+	while(idx > 0 && heap[getRoot(idx)] < heap[idx]) {
+		swap(heap[idx], heap[getRoot(idx)]);
+		idx = getRoot(idx);
+	}
+}
+
+int heapRemove() {
+	int element = heap[0];
+	heap[0] = heap[heap.size() - 1];
+	heap.pop_back();
+	// 루트부터 자식과 비교해 자리 찾기
+	int here = 0;
+	while(true) {
+		int left = getLeftChild(here);
+		int right = getRightChild(here);
+		if(left >= heap.size()) break;
+
+		int next = here;
+		if(heap[next] < heap[left]) {
+			next = left;
+		} else if(right < heap.size() && heap[next] < heap[right]) {
+			next = right;
+		}
+		if(next == here) break;
+		swap(heap[here], heap[next]);
+		here = next;
+	}
+	return element;
+}
+~~~
