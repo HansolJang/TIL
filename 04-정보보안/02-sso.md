@@ -47,3 +47,20 @@
 4. 사용자가 openID 제공자 사이트에서 로그인
 5. openID 제공자가 사용자를 식별하고 사용자 정보 전달
 6. 사용자가 사이트A 접근 (필요하면 추가 정보 입력을 요청)
+
+###OAuth
+- 인터넷 사용자들이 비밀번호를 제공하지 않고 다른 웹사이트 상의 자신들의 정보에 대해 웹사이트나 애플리케이션의 접근 권한을 부여하는 수단으로 쓰는 표준
+- OAuth는 인증 프로토콜이 아닌, 인가 프로토콜이다.
+
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/OpenIDvs.Pseudo-AuthenticationusingOAuth.svg/512px-OpenIDvs.Pseudo-AuthenticationusingOAuth.svg.png)
+
+1. 소비자가 서비스제공자에게 권한이 없는 서비스를 요청한다.
+2. 서비스제공자가 권한이 없으면 소비자에게 IdP 권한을 허용할 것을 묻는다.
+3. 소비자가 지정된 scope에 정보 제공을 동의한다.
+4. IdP가 등록된 redirect_uri에 code를 사용자에게 보낸다.
+5. 사용자가 redirect_uri에 접근한다.
+6. 서비스제공자가 redirect_uri에서 code를 받아 자신의 서비스 식별정보(id, secret key)와 code를 IdP에 전송한다.
+7. IdP는 서비스 인증 정보와 code를 확인하고 accessToken을 발급한다.
+8. 발급된 접근 토큰을 이용하여 서비스제공자가 사용자 정보에 접근한다.
+
+![](http://tutorials.jenkov.com/images/oauth2/endpoints.png)
