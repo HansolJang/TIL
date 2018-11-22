@@ -21,8 +21,11 @@
 + 관리 가능한 네트워크에선 Active Directory를 주로 사용   
 
 ### SAML (Security Assertion Markup Language)
-- xml 형식의 언어인데 SSO를 구현하는 데에도 쓰인다
-- 
+- identity provider와 service provider 간의 인증, 인가 데이터를 교환하기 위한 XML 기반의 데이터 포맷
+- identity provider(IdP): 사용자 인증 정보 제공자
+- service provider(SP): 서비스 제공자
+
+![](https://docs.citrix.com/en-us/netscaler/12/media/SAML-flow.png)
 
 
 ### OpenID
