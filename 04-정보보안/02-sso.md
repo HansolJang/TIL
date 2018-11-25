@@ -54,13 +54,51 @@
 
 ![](https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/OpenIDvs.Pseudo-AuthenticationusingOAuth.svg/512px-OpenIDvs.Pseudo-AuthenticationusingOAuth.svg.png)
 
-1. 소비자가 서비스제공자에게 권한이 없는 서비스를 요청한다.
-2. 서비스제공자가 권한이 없으면 소비자에게 IdP 권한을 허용할 것을 묻는다.
-3. 소비자가 지정된 scope에 정보 제공을 동의한다.
-4. IdP가 등록된 redirect_uri에 code를 사용자에게 보낸다.
-5. 사용자가 redirect_uri에 접근한다.
-6. 서비스제공자가 redirect_uri에서 code를 받아 자신의 서비스 식별정보(id, secret key)와 code를 IdP에 전송한다.
-7. IdP는 서비스 인증 정보와 code를 확인하고 accessToken을 발급한다.
-8. 발급된 접근 토큰을 이용하여 서비스제공자가 사용자 정보에 접근한다.
+1. **Resource Owner**   
+	접근 권한을 가진 개체. id/pw를 알고 있는 사용자.
+2. **Resource Server**   
+	자원을 가진 서버. 접근 토큰을 이용하면 필요한 자원을 응답.
+3. **Client**   
+	권한을 갖고 resource server에 자원을 요청하는 애플리케이션. (웹, 모바일 등)
+4. **Authorization Server**   
+	resource owner를 인증하고 client에게 accessToken를 부여하는 서버.
 
-![](http://tutorials.jenkov.com/images/oauth2/endpoints.png)
+~~~
+     +--------+                               +---------------+    
+     |        |--(A)- Authorization Request ->|   Resource    |    
+     |        |                               |     Owner     |    
+     |        |<-(B)-- Authorization Grant ---|               |     
+     |        |                               +---------------+    
+     |        |    
+     |        |                               +---------------+    
+     |        |--(C)-- Authorization Grant -->| Authorization |    
+     | Client |                               |     Server    |    
+     |        |<-(D)----- Access Token -------|               |    
+     |        |                               +---------------+    
+     |        |    
+     |        |                               +---------------+    
+     |        |--(E)----- Access Token ------>|    Resource   |    
+     |        |                               |     Server    |    
+     |        |<-(F)--- Protected Resource ---|               |    
+     +--------+                               +---------------+    
+~~~
+
+권한을 인가하는 방법에는 4가지가 있다.
+
+1. **Authorization Code**  
+	- (A) 단계를 거치지 않고 Resource Owner가 직접 Authorization Server에게 인가하여 Client 에게 Authorization Code를 응답하는 방식.   
+	- Client가 사용자 정보를 전혀 모르기 때문에 보안성이 높지만 개발이 복잡하다.   
+	- Client는 사용자에게 받은 Authorization Code를 이용하여 토큰을 발급받는다.  
+2. **Implicit**
+	- Authorization Code에서 간소화된 방식
+	- Authorization Code를 받는게 아니라 바로 토큰을 응답받는다.
+	- 사용자가 권한 서버에게 토큰을 받아 Client에게 전달하는 방식.
+	- 권한 서버가 Client를 인증하지 않기 때문에, 떄로는 redirection_uri를 통해 client id를 확인하기도 한다.
+3. **Resource Owner Password Credentials**
+	- 사용자의 id/pw를 사용해 token을 발급
+	- 사용자가 client를 신뢰하는 경우에만 사용
+	- 토큰을 발급받은 후에 사용자 정보를 저장하면 안됨
+4. **Client Credentials**
+	- Client = Resource Owner일 경우 사용
+	- 클라이언트가 자신을 입증하는 id/secret을 제출하면 토큰을 발급받는다
+	- 자신의 자원을 가진 서비스/서버에서 요청하는 경우
