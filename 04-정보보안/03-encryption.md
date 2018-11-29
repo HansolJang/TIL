@@ -44,6 +44,15 @@
 	- 1. **통신할 상대방**이 신뢰할 만한지 인증 (Handshake 프로토콜: 상대가 갖고 있는 인증서를 받아 상대방을 검증)
 	- 2. 보낼 데이터 암호화
 	- OpenSSL: SSL/TLS를 구축한 오픈 소스 (Heartbleed: OpenSSL의 TLS 구축 방법 문제로 시스템상 메모리에서 평문 데이터를 참조할 수 있는 문제가 2013년 발생)
+	
+		- Handshake Protocol
+			1. Client -> Server: 사용할 수 있는 암호 알고리즘 제시
+			2. Client <- Server: 알고리즘 결정
+			3. Client <- Server: 인증서(공개키) 전송
+			4. Client -> Server: 인증서 검증 후, 프리 마스터 키를 공개키로 암호화하여 전송
+			5. Client -> Server: 프리 마스터 키로 공통키 생성 완료하고 준비가 끝났음을 알림
+			6. Client <- Server: 프리 마스터 키를 비밀키로 복호화하여 공통키를 생성 완료하고 준비가 끝났음을 알림
+			7. 암호화 통신 시작
 
 
 ### 2. 공개키 암호화
