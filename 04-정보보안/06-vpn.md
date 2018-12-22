@@ -63,8 +63,18 @@
 - 점점 사용이 자제되는 프로토콜
 
 ### SSTP
-SSL, TVLG 가능할까요~~>?
+- Microsoft에서 만든 VPN 프로토콜(비스타 이후 버전부터 지원)
+- TLS/SSL 을 사용하여 암호 통신을 하므로 강한 암호 알고리즘을 채택할 수 있음
+- TCP를 사용
 
-- PPTP 이후 2008년 이후부터 Microft Software를 조건적으로 허용
-- 자신의 네트워가 너무 편향되어이씅
-- 
+### OpenVPN
+- 오픈 소스 VPN 소프트웨어
+- TLS/SSL, SSH 등 다양한 암호화 통신 프로토콜 지원
+- windows, linux, mac, ios, android 운영체제 지원
+- VPN 서버가 별도로 필요
+
+### PacketiX
+- 소프트이더에서 판매
+- L2TP + IPsec, SSTP, OpenVPN 등 지원
+- windows, linux, mac, ios, android 운영체제 지원
+- OpenVPN보다 통신 성능이 좋지만 유료
