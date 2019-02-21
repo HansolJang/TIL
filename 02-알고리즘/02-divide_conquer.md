@@ -15,7 +15,7 @@
 ##### Merge(A, p, q, r)
 - 위의 `결합`부분에 해당하는 프로시저
 
-![](https://www.google.com/search?q=merge+sort+pseudocode&source=lnms&tbm=isch&sa=X&ved=0ahUKEwisnKKryszgAhXCGKYKHe6SA_8Q_AUIDigB&biw=1440&bih=718#imgrc=PVD6Uf387cTWOM:)
+![](https://i.stack.imgur.com/Owtfo.png)
 
 - 1 ~ 2: A[p..q], A[p+1..r]의 크기를 구한다.
 - 3 ~ 7: A[p..q]를 L에 A[p+1..r]를 R에 복사한다.
@@ -24,3 +24,30 @@
     - L, R의 가장 왼쪽 원소를 비교하며 더 작은 것을 A[k] 자리에 넣는다
 
 - 원소의 크기만큼의 연산으로 두 배열을 결합할 수 있다 -> O(n) 
+
+
+![](http://www.personal.kent.edu/~rmuhamma/Algorithms/MyAlgorithms/Sorting/Gifs/mergeSort.gif)
+![](https://i.stack.imgur.com/wk49i.png)
+
+
+#### 분할정복 알고리즘의 분석
+- 점화식을 풀어서 알고리즘에 대한 성능 한계를 구하자
+- 가장 작은 문제는 정렬할 원소가 1개일 때로, 상수 시간 소요 O(1)
+- 입력의 크기가 n인 문제를 b개로 나눠서 총 a개의 문제로 만들어냈다고 할때, 
+```
+총 수행시간 T(n) = aT(n / b) + D(n) + C(n)
+```
+
+##### 병합 정렬의 분석
+1. 분할: 부분 배열의 중간 위치를 계산. 나누기 연산 O(1)
+2. 정복: 두 개의 부분 문제를 재귀적으로 푸는데, 각 부분 문제는 크기가 n/2이므로 `2 * T(n / 2)`
+3. 결합: 위에 설명했듯이 O(n)
+
+```
+수행시간 T(n) = O(1)     
+or 2T(n / 2) + O(n)     
+```
+
+![](https://0jun0815.github.io/assets/images/algorithm/2018-11-06-merge-sort/tree2.png)
+
+- 즉 O(n lg n) (밑은 2)가 된다.
