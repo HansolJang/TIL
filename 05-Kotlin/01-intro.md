@@ -25,7 +25,9 @@ try.kotl.in
 
 컴파일러 문맥을 고려해 변수 타입을 결정
 
+```
     val x = 1  // Int임을 자동으로 추론
+```
 
 동적 타입 지정 언어: 타입과 관계없이 모든 값을 변수에 넣을 수 있고, 이로 인해 컴파일 에러가 나지 않음 → 런타임 오류 발생! (JVM에서의 Groovy, JRuby / 파이썬)
 
@@ -33,8 +35,10 @@ try.kotl.in
 
 타입 뒤에 ?을 붙이면 nullable
 
+```
     val x: Int = null         // 에러!
     val str: String? = null 
+```
 
 ## 특징3. Functional Programming 지원
 
@@ -43,6 +47,7 @@ try.kotl.in
 - first-class function: 함수를 일반 값처럼 다룰 수 있다. 함수를 변수에 저장하거나 파라미터로 전달하거나 함수에서 새로운 함수를 만들어 반환할 수 있다. → 람다 함수 지원
     - higher-order function: 함수를 파라미터로 받거나 함수를 리턴하는 함수
 
+```
     // Collection에 멤버 함수를 추가
     fun <T, R> Collection<T>.fold(
         initial: R, 
@@ -56,7 +61,9 @@ try.kotl.in
     		// 누적된 결과값을 리턴
         return accumulator
     }
+```
 
+```
     val items = listOf(1, 2, 3, 4, 5)
     
     items.fold(0, { 
@@ -65,12 +72,15 @@ try.kotl.in
         println("acc = $acc, i = $i, result = $result")
     	  result                  // return 을 명시하지 않는다
     })
+```
 
+```
     acc = 0, i = 1, result = 1
     acc = 1, i = 2, result = 3
     acc = 3, i = 3, result = 6
     acc = 6, i = 4, result = 10
     acc = 10, i = 5, result = 15
+```
 
 - immutability(불변성): 일단 만들어지고 나면 내부 상태가 절대로 바뀌지 않는 불변 객체를 사용해 프로그램을 작성한다. → data class 객체, val 변수
     - 직접 변경하면 그 객체, 변수를 참조하는 모든 곳에 알려야 함. 의도하지 않은 객체의 변경이 일어날 수 있음.
@@ -85,10 +95,11 @@ try.kotl.in
 함수형 프로그래밍의 장점
 
 1. 더욱 간결하고 추상화된 프로그래밍이 가능하다. 코드 중복을 더욱 줄일 수 있다.
-
+```
     // findPerson을 공통 함수로 묶고, 조건이 다른 함수를 따로 정의 
     fun findAlice() = findPerson{ it.name == "Alice" }
     fun findBob() = findPerson{ it.name == "Bob" }
+```
 
 2. 다중스레드에서도 안전하다. 불변 객체와 순수 함수를 사용하면 같은 데이터를 여러 스레드에서 바꿀 수 없다.
 
@@ -100,6 +111,7 @@ try.kotl.in
 
 - 웹 브라우저에 HTML 페이지를 돌려주는 웹 애플리케이션
 
+```
     fun renderPersonList(persons: Collection<Person>) {
     		createHTML().table {
     				for(person in persons) {
@@ -126,6 +138,7 @@ try.kotl.in
     }.first()
     
     println(russia.name)
+```
 
 - 모바일 애플리케이션에 HTTP 통신으로 JSON API를 제공하는 Backend 애플리케이션
 
@@ -135,6 +148,7 @@ try.kotl.in
 
     인자로 받은 람다 함수를 inlining한다. (새로운 객체를 만들지 않는다. 따라서 객체 증가로 인해 GC가 늘어나서 프로그램이 자주 멈추는 일이 없다.)
 
+```
     // Anko lib
     verticalLayout {
     		val name = editText()
@@ -142,6 +156,7 @@ try.kotl.in
     				onClick { toast("Hello, ${name.text}!") }
     		}
     }
+```
 
 - RPC 프로토콜을 통해 서로 통신하는 마이크로서비스
 
@@ -163,11 +178,13 @@ try.kotl.in
 - NPE: 방지 데이터 타입 (?)
 - ClassCastException: 어느정도 자동으로 검사해주고 캐스팅 없이 사용할 수 있음
 
+```
     if(value instanof Stirng)
     	((String) value).toUpperCase()
 
     if(value is String)
     	value.toUpperCase()
+```
 
 ## 코틀린의 철학4. 상호운용성
 
@@ -178,8 +195,10 @@ try.kotl.in
 
 [](https://www.notion.so/a0c90a7239824282bfb69cdb87e38e90#4ae6c1456e6b4e08944dbea1512448ef)
 
+```
     kotlinc <file or dir> -include-runtime -d <jar name>
     java -jar <jar name>
+```
 
 - .jar는 여러 .class 파일들의 압축 파일이다
 
