@@ -51,3 +51,32 @@ or 2T(n / 2) + O(n)
 ![](https://0jun0815.github.io/assets/images/algorithm/2018-11-06-merge-sort/tree2.png)
 
 - 즉 O(n lg n) (밑은 2)가 된다.
+
+```kotlin
+fun mergeSort(list: List<Int>): List<Int> {
+    if (list.size <= 1) return list
+    val middle = list.size / 2
+    var left = list.subList(0, middle);
+    var right = list.subList(middle, list.size);
+    return merge(mergeSort(left), mergeSort(right))
+}
+
+
+fun merge(left: List<Int>, right: List<Int>): List<Int>  {
+    var indexLeft = 0
+    var indexRight = 0
+    var newList : MutableList<Int> = mutableListOf()
+
+    while (indexLeft < left.count() 
+           && indexRight < right.count())
+        if (left[indexLeft] <= right[indexRight]) 
+            newList.add(left[indexLeft++])
+        else 
+            newList.add(right[indexRight++])
+
+    for(i in indexLeft until left.size) newList.add(left[i])
+    for(i in indexRight until right.size) newList.add(right[i])
+
+    return newList;
+}
+```
