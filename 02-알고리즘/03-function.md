@@ -57,8 +57,6 @@
 
 - `n`대신 `f(n)`에 대입할 수 있다.
 
-![](https://www.researchgate.net/publication/272666937/figure/fig1/AS:615090462146562@1523660402942/Pictorial-Representation-of-big-theta.png)
-
 
 ### Big-O (빅 오) 표기법
 - 점근적 상한선만 고려
@@ -66,6 +64,7 @@
 - **실행 시간은 최대 이만큼 커지지만 더 천천히 커질 수도 있다**
 - 실행시간이 O(f(n))이라면 실행시간은 최대 k * f(n)
 	- 충분히 큰 n에 대해서만 고려 (n >= n<sub>0</sub>)
+	
 ![](https://cdn.kastatic.org/ka-perseus-images/501211c02f4c6765f60f23842450e1151cfd9c89.png)
 
 - 특정 상황에서 실행 시간이 Θ(f(n))이라면, 이는 또한 O(f(n)) 이다.
