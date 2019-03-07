@@ -99,3 +99,21 @@ fun merge(left: List<Int>, right: List<Int>): List<Int>  {
 
 - 점화식을 서술하고 해를 구할 때 보통 한계 조건, 올림, 내림을 생략한다
 - 문제를 모두 풀고난 후에 고려할만 한 조건인지 결정한다
+
+
+#### 예시2: 최대 부분 배열 문제
+- 주어진 배열에서 연속된 원소의 합이 최대가 되는 배열 중 하나를 구하는 문제
+
+![](https://www.geeksforgeeks.org/wp-content/uploads/kadane-Algorithm.png)
+
+- 수열을 중간값(mid)을 기준으로 둘로 나누면, 최대 부분 배열 중 하나 A[i..j]는
+    - low <= i <= j <= mid: A[low..mid]에 완전히 포함되는 경우
+    - mid + 1 <= i <= j <= high: A[mid+1..high]에 완전히 포함되는 경우
+    - low <= i <= mid <= j <= high: 중간값에 걸쳐있을 경우
+        - A[i..mid]의 최대와 A[mid + 1..j]의 최대를 구해 합치면 된다 
+
+![](http://sonny.io/wp-content/uploads/2016/07/max_crossing1.png)
+
+최대 부분 배열을 찾는 프로시저
+
+![](http://pds27.egloos.com/pds/201501/29/89/a0322389_54c9d85e785d9.png)
