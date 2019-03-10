@@ -114,6 +114,26 @@ fun merge(left: List<Int>, right: List<Int>): List<Int>  {
 
 ![](http://sonny.io/wp-content/uploads/2016/07/max_crossing1.png)
 
-최대 부분 배열을 찾는 프로시저
+A[mid]를 포함해 걸쳐있는 최대 부분 배열을 찾는 프로시저
+FIND-MAX-CROSSING-SUBARRAY
 
 ![](http://pds27.egloos.com/pds/201501/29/89/a0322389_54c9d85e785d9.png)
+
+- 1~7행: A[mid]를 무조건 포함하는 A[i..mid]이 최대가 되는 i를 찾는다
+- 8~14행: A[mid+1]을 무조건 포함하는 A[mid+1..j]가 최대가 되는 j를 찾는다
+- 두개를 합하면 겹치는 최대 부분 수열을 Θ(n)에 구할 수 있다
+- 이 프로시저를 토대로 최대 부분 수열을 찾는 수도코드를 작성할 수 있다
+
+FIND-MAX-SUBARRAY
+
+![](http://www2.hawaii.edu/~nodari/teaching/s15/Notes/Topic-07/find-maximum-subarray.jpg)
+
+- 1~2행: 베이스 케이스. 원소가 하나일 땐 최대 부분수열이 그 자체이다.
+- 4행: A[low..mid]에서의 최대 부분 수열을 리턴하도록 재귀호출한다.
+- 5행: A[mid+1..high]에서의 최대 부분 수열을 리턴하도록 재귀호출한다.
+- 6행: A[mid]를 무조건 포함하는 최대 부분 수열을 리턴하도록 재귀호출한다.
+- 7~11행: 4,5,6행의 결과 중 가장 큰 부분 수열을 리턴한다.
+
+이 분할 정복 알고리즘의 수행시간은
+T(n) = Θ(1)             if n = 1
+        2T(n/2) + Θ(n)  if n > 1
