@@ -116,9 +116,9 @@ join.kt
 - *캡슐화는 깨지지 않는다*
     - `private`, `protected`와 같이 보호 되어있는 멤버 함수나 멤버 변수는 확장 함수에서 사용할 수 없다
 
-```
-`joinToString()`을 모든 컬렉션의 확장 함수로 정의하자
 
+`joinToString()`을 모든 컬렉션의 확장 함수로 정의하자
+```
     fun <T> Collection<T>.joinToString(seperator: String = ", ",
     																	prefix: String = "(", 
     																	postfix: String = ")"): String {
@@ -129,5 +129,164 @@ join.kt
     		}
     		result.append(postfix)
     		return result.toString()
+    }
+```
+
+- **확장함수는 오버라이드할 수 없다.**
+```
+    fun View.showOff() = println("I'm a View!")
+    fun Button.showOff() = println("I'm a Button!")
+    
+    // 실제로 가리키는 것은 버튼이지만
+    // I'm a View!가 출력된다.
+    val view = Button()
+    view.showOff()
+```
+
+- 멤버함수와 같은 이름, 파라미터의 확장함수를 정의한다면 **멤버함수**가 호출된다.
+
+- val, var 형의 확장프로퍼티를 선언할 수 있다.
+```
+    val String.lastChar: Char
+        get() = get(length - 1)
+    
+    var StringBuilder.lastChar: Char
+        get() = get(length - 1)
+        set(value: Char) {
+            this.setCharAt(length - 1, value)
+        }
+```
+
+## 3.4 컬렉션 처리: 가변 길이 인자, 중위 함수 호출, 라이브러리 지원
+
+- 가변길이 인자
+
+### 가변길이 인자
+```
+    // Java: T... values
+    fun listOf<T>(vararg values: T): List<T> {...}
+    
+    // 명시적으로 펼쳐줘야하지만 * 스프레드 연산자가 자동으로 펼쳐
+    fun main(args: Array<String>) {
+            val list = listOf("element", *args)
+    }
+```
+
+### 값의 쌍 다루기: 중위 호출과 구조 분해 선언
+
+```
+    val map = mapOf(1 to "one", 7 to "seven", 53 to "fifty-three")
+    
+    1 to "one"
+    1.to("one")
+```
+
+- `to` 는 키워드가 아니다. 일반 메소드를 중위 호출한 것이다.
+
+    infix fun Any.to(other: Any) = Pair(this, other)
+
+- 중위호출하려면 함수앞에 `infix` 키워드를 추가해주면 된다.
+- **파라미터가 1개** 뿐인 일반 메소드나 확장함수에 가능하다.
+
+```
+    // pair.first, pair.second 로 접근해야함
+    val pair = 1 to "one"
+    
+    // 구조를 분해해 number, name 각각 접근 가능
+    val (number, name) = 1 to "one"
+    
+    // 구조 분해로 index와 element 접근 가능
+    for((index, element) in collection.withIndex()) {
+     ...
+    }
+```
+
+## 3.5 문자열과 정규식 다루기
+
+- 문자열 나누기
+    - 자바에서는 `split()`의 파라미터로 정규식을 받기 때문에 "."을 넘길 경우 모든 문자를 뜻해 문자열을 분리할 수 없다.
+    - 코틀린에선 정규식, 구분자 여러개 등을 지정할 수 있는 확장함수를 제공한다.
+
+```
+    // 결과: []
+    "12.345-6.A".split(".")
+```
+
+- 정규식과 3중 따옴표로 묶은 문자열
+
+`/Users/documents/kotlin-book/chapter1.doc`
+
+위와 같은 경로를 디렉터리, 파일이름, 확장자로 구분해보자.
+```
+    fun parsePath(path: String) {
+            val directory = path.substringBeforeLast("/")   // /Users/documents/kotlin-book
+            val fullName = path.substringAfterLast("/")     // chapter1.doc
+            val fileName = fullName.substringBeforeLast(".")   // chapter1
+            val extension = fullName.substringAfterLast(".")   // doc
+    }
+
+    fun parsePath(path: String) {
+            val regex = """(.+)/(.+)\.(.+)""".toRegex()
+            val matchResult = regex.matchEntire(path)
+            if (matchResult != null) {
+                    val (dir, filname, ext) = matchResult.destructured
+            }
+    }
+```
+
+- 정규식의 특성에 의해 가장 마지막 `/`까지의 문자열이 첫번째 결과가 된다.
+- 3중 따옴표에선 `.`을 찾아내기 위해 `\\.` 이 아니라 `\.`이라고 명시한다.
+```
+    val kotlinLogo = """|  //
+                                            .| //
+                                            .|/ \"""
+    
+    println(kotlinLogo.trimMargin("."))
+```
+
+- `.`으로 여백을 구분해주지 않으면 띄어쓰기가 모두 출력된다.
+- 들여쓰기를 해야할 땐 규칙을 정해 구분자를 써주도록 한다.
+
+## 3.6 코드 다듬기: 로컬 함수와 확장
+
+**DRY: Don't Repeat Yourself**
+
+- 로컬 함수
+    - 함수 내부의 함수로써 바깥 함수의 변수에 접근이 가능하다.
+
+```
+    fun saveUser(user: User) {
+            // 중복!
+        if (user.name.isEmpty()) {
+            throw IllegalArgumentException(
+                "Can't save user ${user.id}: empty Name")
+        }
+    
+            // 중복!
+        if (user.address.isEmpty()) {
+            throw IllegalArgumentException(
+                "Can't save user ${user.id}: empty Address")
+        }
+    
+        // Save user to the database
+    }
+```
+
+- `isEmpty()` 로 validate 하는 부분만 따로 빼자니 파라미터로 또 `name`, `address` 를 받아야한다.
+
+```
+    // 확장함수
+    fun User.validateBeforeSave() {
+            // 로컬함수
+        fun validate(value: String, fieldName: String) {
+            if (value.isEmpty()) {
+                throw IllegalArgumentException(
+                   "Can't save user $id: empty $fieldName")
+            }
+        }
+    
+            // 로컬함수 호출
+        validate(name, "Name")
+        validate(address, "Address")
     }
 ```
