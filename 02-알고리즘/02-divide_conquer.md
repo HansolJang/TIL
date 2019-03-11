@@ -138,7 +138,7 @@ FIND-MAX-SUBARRAY
 T(n) = Θ(1)             if n = 1    
         2T(n/2) + Θ(n)  if n > 1
 
-```
+```kotlin
 fun main(args: Array<String>) {
     val array = arrayListOf<Int>(-2,-3,4,-1,-2,1,5,-3)
     val ms = array.findMaximumSubArray(0, array.lastIndex)
@@ -146,38 +146,38 @@ fun main(args: Array<String>) {
 }
 
 // 최대 부분 수열의 합, 시작, 끝 인덱스 리턴
-    fun ArrayList<Int>.findMaximumSubArray(low: Int, high: Int): Pair<Int, Pair<Int, Int>> {
+fun ArrayList<Int>.findMaximumSubArray(low: Int, high: Int): Pair<Int, Pair<Int, Int>> {
 
-        // 로컬 함수
-        fun findCrossingMaximumSubArray(low: Int, mid: Int, high: Int): Pair<Int, Pair<Int, Int>> {
-            var lowSum = 0
-            var sum = 0
-            var maxLow = 0
-            var maxHigh = 0
-            for(i in mid downTo low) {
-                sum += this[i]
-                if(lowSum < sum) {
-                    lowSum = sum
-                    maxLow = i
-                }                 
-            }
-            var highSum = 0
-            sum = 0
-            for(j in mid + 1..high) {
-                sum += this[j]
-                if(highSum < sum) {
-                    highSum = sum
-                    maxHigh = j
-                }
-            }
-            return lowSum + highSum to (maxLow to maxHigh) 
+    // 로컬 함수
+    fun findCrossingMaximumSubArray(low: Int, mid: Int, high: Int): Pair<Int, Pair<Int, Int>> {
+        var lowSum = 0
+        var sum = 0
+        var maxLow = 0
+        var maxHigh = 0
+        for(i in mid downTo low) {
+            sum += this[i]
+            if(lowSum < sum) {
+                lowSum = sum
+                maxLow = i
+            }                 
         }
-
-        if (low == high) return this[low] to (low to high)
-        val mid = (low + high) / 2
-        return listOf(this.findMaximumSubArray(low, mid),
-                this.findMaximumSubArray(mid + 1, high),
-                findCrossingMaximumSubArray(low, mid, high))
-                .maxBy { it.first }!!
+        var highSum = 0
+        sum = 0
+        for(j in mid + 1..high) {
+            sum += this[j]
+            if(highSum < sum) {
+                highSum = sum
+                maxHigh = j
+            }
+        }
+        return lowSum + highSum to (maxLow to maxHigh) 
     }
+
+    if (low == high) return this[low] to (low to high)
+    val mid = (low + high) / 2
+    return listOf(this.findMaximumSubArray(low, mid),
+            this.findMaximumSubArray(mid + 1, high),
+            findCrossingMaximumSubArray(low, mid, high))
+            .maxBy { it.first }!!
+}
 ```
