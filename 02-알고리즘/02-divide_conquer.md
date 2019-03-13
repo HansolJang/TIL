@@ -101,7 +101,7 @@ fun merge(left: List<Int>, right: List<Int>): List<Int>  {
 - 문제를 모두 풀고난 후에 고려할만 한 조건인지 결정한다
 
 
-#### 예시2: 최대 부분 배열 문제
+### 예시2: 최대 부분 배열 문제
 - 주어진 배열에서 연속된 원소의 합이 최대가 되는 배열 중 하나를 구하는 문제
 
 ![](https://www.geeksforgeeks.org/wp-content/uploads/kadane-Algorithm.png)
@@ -134,7 +134,7 @@ FIND-MAX-SUBARRAY
 - 6행: A[mid]를 무조건 포함하는 최대 부분 수열을 리턴하도록 재귀호출한다.
 - 7~11행: 4,5,6행의 결과 중 가장 큰 부분 수열을 리턴한다.
 
-이 분할 정복 알고리즘의 수행시간은
+이 분할 정복 알고리즘의 수행시간은 Θ(n log n)
 T(n) = Θ(1)             if n = 1    
         2T(n/2) + Θ(n)  if n > 1
 
@@ -181,3 +181,33 @@ fun ArrayList<Int>.findMaximumSubArray(low: Int, high: Int): Pair<Int, Pair<Int,
             .maxBy { it.first }!!
 }
 ```
+
+
+### 점화식을 풀기 위한 마스터 방법
+
+```
+T(n) = aT(n / b) + f(n)
+```
+- 단, a >=1 이고 b > 1이고 상수이며, f(n)은 점근적으로 양인 함수다.
+- n을 크기가 n/b인 a개의 문제로 나눈다.
+- a개의 하위문제는 각각 T(n/b)시간에 재귀적으로 풀린다.
+- 하위 문제들을 합치는 데 드는 시간을 f(n)으로 표현한다.
+- 마스터 방법의 한계
+![](![](../99-images/algorithm_02_01.png))
+
+#### 사용 예시
+1.
+```
+T(n) = 9T(n / 3) + n
+```
+- a = 9, b = 3, f(n) = n
+- ε = 1 일때, f(n) = O(n<sup>log<sub>3</sub>9 - ε</sup>) = n 이므로 1식 적용 가능
+- Θ(n<sup>log<sub>b</sub>a</sup>) = Θ(n<sup>2</sup>)
+
+2.
+```
+T(n) = T(2n/3) + 1
+```
+- a = 1, b = 3/2, f(n) = 1
+- f(n) = Θ(n<sup>log<sub>b</sub>a</sup>) = Θ(n<sup>log<sub>3/2</sub>1</sup>) = n<sup>0</sup> = 1 이므로 2식 적용 가능
+- Θ(n<sup>log<sub>b</sub>a</sup>log n) = Θ(log n)
