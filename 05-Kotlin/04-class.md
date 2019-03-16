@@ -7,7 +7,7 @@
 ## 4.1 클래스 계층 정의
 
 ### 인터페이스
-```
+```kotlin
     interface Clickable {
         fun click()
     		// 디폴트 구현이 있는 메소드
@@ -56,7 +56,7 @@
 
 [코틀린의 가시성 변경자](https://www.notion.so/0b5fbe431b4f4b469cd43178c3e879ad)
 
-```
+```kotlin
     internal open class TalkativeButton: Focusable {
     		private fun yell() = println("hey!")
     		protected fun whisper() = println("let's talk!")
@@ -88,7 +88,7 @@
 - 상위 클래스를 상속한 하위 클래스 정의를 제한
 - 클래스 외부에서 상속할 수 없음
 
-```
+```kotlin
     // 클래스 내부에서 중첩 클래스로 모든 상속 클래스 선언
     sealed class Expr {
         class Num(val value: Int) : Expr()
@@ -107,7 +107,7 @@
 
 ### 클래스 생성자: 주 생성자와 초기화 블록
 
-```
+```kotlin
     // 기본 클래스 선언
     class User {
             val nickname: String
@@ -134,7 +134,7 @@
                        val isSubscribed: Boolean = true)
 ```
 
-```
+```kotlin
     val hansol = User("한솔")            // isSubscribed 생략 가능
     val gye = User("계영", false)
 ```
@@ -145,7 +145,7 @@
 - 디폴트 생성자를 선언하지 않으면 `User()`을 자동으로 만들어 준다.
 - **클래스를 상속할 땐 생성자를 반드시 호출해야 한다**.
 
-```
+```kotlin
     // 생성자가 있는건 클래스, 없는건 인터페이스
     class RadioButton: Button(), OnClickListener 
 ```
@@ -174,7 +174,7 @@
 
 ### 인터페이스에 선언된 프로퍼티 구현
 
-```
+```kotlin
     interface User {
             val nickname: String
     }
@@ -182,7 +182,7 @@
 
 User의 프로퍼티를 구현하는 3가지 방법
 
-```
+```kotlin
     // 주생성자에 정의
     class PrivateUser(override val nickname: String) : User
     
@@ -205,7 +205,7 @@ User의 프로퍼티를 구현하는 3가지 방법
 - 뒷받침 필드 `field`
     - 커스텀 게터/세터에서 해당 필드에 접근하는 키워드
 
-```
+```kotlin
     class User(val name: String) {
         var address: String = "unspecified"
                     // 커스텀 세터
@@ -222,7 +222,7 @@ User의 프로퍼티를 구현하는 3가지 방법
 
 - `get`은 `public` 이지만, `set`은 `private` 으로 하고 싶을 때
 
-```
+```kotlin
     class LengthCounter {
         var counter: Int = 0
             private set
@@ -254,7 +254,7 @@ User의 프로퍼티를 구현하는 3가지 방법
 
 - 클래스가 문자열로 표현될 내용 정의
 
-```
+```kotlin
     class Client(val name: String, val postalCode: Int) {
             override fun toString() = "Client(name=$name, postalCode=$postalCode)"
     }
@@ -264,7 +264,7 @@ User의 프로퍼티를 구현하는 3가지 방법
 
 - 내부에 동일한 데이터를 포함하는 경우 두 객체는 같다고 간주되어야한다.
 
-```
+```kotlin
     fun main(args: Array<String>) {
         val client1 = Client("Alice", 342562)
         val client2 = Client("Alice", 342562)
@@ -283,7 +283,7 @@ User의 프로퍼티를 구현하는 3가지 방법
 
     자바에서는 레퍼런스 타입에 == 을 사용하면 주소값을 비교하지만, ***코틀린에서는 내부에서 equals() 함수를 호출한다. 주소값을 비교하고 싶다면 ===을 사용할것!***
 
-```
+```kotlin
     class Client(val name: String, val postalCode: Int) {
             // 인자로 어떤 오브젝드든 받을 수 있다
         override fun equals(other: Any?): Boolean {
@@ -299,7 +299,7 @@ User의 프로퍼티를 구현하는 3가지 방법
 
 **해시 컨테이너: hashCode()**
 
-```
+```kotlin
     val processed = hashSetOf(Client("Alice", 342562))
     println(processed.contains(Client("Alice", 342562)))
     
@@ -309,7 +309,7 @@ User의 프로퍼티를 구현하는 3가지 방법
 - JVM언어: `equals()`가 `true` 인 두 객체는 반드시 같은 `hashCode()`를 반환해야 한다
 - `hashSet` 과 같은 해시 기반 객체는 두 객체의 비용을 줄이기 위해 해시코드 값이 같을 경우에만 데이터를 직접 비교한다.
 
-```
+```kotlin
     class Client(val name: String, val postalCode: Int) {
             ...
             override fun hashCode(): Int = name.hashCode() * 31 + postalCode
@@ -321,7 +321,7 @@ User의 프로퍼티를 구현하는 3가지 방법
 
 ### 데이터클래스: 모든 클래스가 정의해야 하는 메소드 자동 생성
 
-```
+```kotlin
     data class Client(val name: String, val postalCode: Int)
 ```
 
@@ -341,7 +341,7 @@ User의 프로퍼티를 구현하는 3가지 방법
     - 원본을 참조하는 곳에 영향을 끼치지 않음
     - 객체를 복사하면서 일부 프로퍼티만 바꿀 수 있는 `copy()`
 
-```
+```kotlin
         fun copy(name: String = this.name, postalCode: Int = this.postalCode) 
                     = Client(name, postalCode)
 ```
@@ -359,7 +359,7 @@ User의 프로퍼티를 구현하는 3가지 방법
     - 데코레이터가 기존 클래스의 인터페이스를 모두 제공 (기능을 기존 클래스로 전달) 하면서 새로운 기능도 쓸 수 있게 해줌
     - 준비 코드가 많이 필요 (상속하고 오버라이드가 필요한 모든 메소드들을 재정의해야함)
 
-```
+```kotlin
         class DelegatingCollection<T> : Collection<T> {
                 private val innerList = arrayListOf<T>()
         
@@ -393,3 +393,166 @@ User의 프로퍼티를 구현하는 3가지 방법
 ```
 
 - MutableCollection에 문서화된 API를 사용하므로 잘 작동할 것임을 확신
+
+
+## 4.4 object 키워드: 클래스 선언과 인스턴스 생성
+
+1. object 클래스
+2. companion object
+3. object 무명 객체 선언
+
+### 객체 선언: 싱글턴을 쉽게 만들기
+
+- 코틀린은 `object` 선언을 통해 싱글턴을 지원
+```kotlin
+    object Payroll {
+            val allEmployees = arrayListOf<Person>()
+            fun calculateSalary() {...}
+    }
+
+    Payroll.allEmployees.add(Person())
+    Payroll.calculateSalary()
+```
+
+- 생성자를 쓸 수 없다.
+- 객체 선언을 하는 즉시 객체 하나가 만들어 진다.
+- 클래스나 인터페이스 상속 가능
+
+```kotlin
+    data class Person(val name: String) {
+            object NameComparator: Comparator<Person> {
+                    override fun compare(p1: Person, p2: Person): Int =
+                            p1.name.compareTo(p2.name)
+            }
+    }
+```
+
+- 클래스 내부에 생성하더라도, 인스턴스는 1개만 존재
+    - Person 객체 마다 1개가 있는 것이 아님! 전체적으로 NameComparator 는 1개의 인스턴스만 존재
+- 자바에서 코틀린 `object`를 호출하려면 `NameComparator.INSTANCE` 와 같이 항상 `INSTANCE` 를 붙여야한다.
+
+### companion object: 팩토리 메소드와 정적 멤버가 들어갈 장소
+
+- 코틀린의 자바의 `static` 을 지원하지 **않는다.**
+    - 코틀린의 최상위 함수나 `object` 로 대신한다.
+- `companion object`  자신의 내 외부에 있는 모든 `private` 멤버에 접근할 수 있다. → 팩토리 패턴
+    - 최상위 함수는 같은 파일내의 클래스의 멤버에 접근할 수 없다!
+- 팩토리 패턴
+
+    부모와 자식 클래스 사이에 끼어서, 상황에 맞는 자식 클래스를 만들어 주는 팩토리로 구성
+
+```kotlin
+    class User {
+            val nickname: String
+            constructor(email: String) {
+                    nickname = email.substringBefore('@')
+            }
+            constructor(facebookAccountId: Int) {
+                    nickname = getFacebookName(facebookAccountId)
+            }
+    }
+```
+
+```kotlin
+    // 주생성자는 private
+    class User private constructor(val nickname: String) {
+            // 팩토리 패턴으로 주생성자 호출
+            // 이름을 붙일 수도 있다
+            companion obejct Factory {
+                    fun newSubscribingUser(email: String) =
+                            User(email.substringBefore('@')
+                    fun newFacebookUser(facebookAccountId: Int) =
+                            User(getFacebookName(facebookAccountId))
+        }
+    }
+
+    val subscribingUser = User.newSubscribingUser("bob@gmail.com")
+    
+    val subscribingUser = User.Factory.newSubscribingUser("bob@gmail.com") 
+```
+
+- 클래스를 확장해야만 하는 경우엔 위의 방법이 적절치 않다.
+    - companion object 는 상속되지 않으므로 확장해야할 경우엔 부생성자들을 선언하는 것이 낫다.
+- 클래스 내부의 companion object는 클래스 이름으로 호출할 수 있다.
+- companion object에서 interface를 구현할 수 있다
+
+```kotlin
+    interface JSONFactory<T> {
+            fun fromJson(jsonText: String): T
+    }
+    
+    // person 클래스 안의 companion object에서 JSONFactory 구현
+    class Person(val name: String) {
+            companion object : JSONFactory<Person> {
+                    override fun fromJson(jsonText: String): Person {...}
+            }
+    }
+
+    // JSONFactory를 인자로 받는 함수
+    fun loadFromJson(factory: JSONFactory<T>): T { ... }
+    
+    // JSONFactory가 구현된 companion objet를 가진 Person 객체를 인자로 넣을 수 있다!
+    loadFromJson(Person("bob"))
+
+    // java에서는 Companion으로 companion object에 접근
+    // 이름을 붙였다면 그 이름으로 접근
+    Person.Companion.fromJson("...");
+```
+
+- companion object 확장
+```kotlin
+    class Person(val name: String) {
+            // 빈 companion object
+            companion object {
+            }
+    }
+    
+    // client-server 통신 모듈
+    fun Person.Companion.fromJson(jsonText: String): Person {...}
+    
+    // 함수 호출
+    val p = Person.fromJson(json)
+```
+
+- person 클래스에는 사람에 대한 멤버만 유지하고 싶을때
+- 직렬화, 서버 통신에 필요한 비즈니스 로직들은 따로 빼고 싶을때
+- 확장함수로 하려면 객체가 있어야함, 비즈니스 로직은 그렇지 않고 static 하게 불러야할 때가 있음
+- companion 확장 함수를 선언하려면 비어있더라도 원래 클래스에 companion object가 있어야함
+
+### 객체 식: 무명 내부 클래스를 다른 방식으로 지정
+
+- 새로운 무명 객체를 만들 때 `object` 키워드 사용
+- 한번에 여러 인터페이스 확장 가능
+```kotlin
+    class MyButton: Button() {
+            interface ButtonListener {
+                    fun onClick()
+            }
+            
+            var listener: ButtonClickListener? = null
+    
+            fun setOnClickListener(myOnClick: () -> Unit) {
+                    listener = object : ButtonListener {
+                            override fun onClick() {
+                                    myOnClick()
+                            }
+                    }
+            }
+    }
+```
+
+```kotlin
+    val button = MyButton()
+    
+    // 1
+    button.listener = object : ButtonLisener {
+            override fun onClick() {
+                    ...
+            }
+    }
+    
+    // 2
+    button.setOnClickListener {
+            ...
+    }
+```
