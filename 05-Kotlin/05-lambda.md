@@ -159,3 +159,63 @@
 ```
 - `flatMap` : 파라미터를 모든 원소에 적용하고, 결과를 한데 모은다
 - 리스트의 리스트의 원소를 모아야할 때 사용
+
+
+## 5.3 lazy 컬렉션 연산
+
+- `map` 과 `filter` 같은 함수들은 결과를 즉시 생성한다.
+- 중첩적으로 부를 때마다 결과 리스트를 생성해 성능이 떨어진다.
+
+    books.map(Book::title).filter { it.startswith("A") }
+
+    books.asSequence() // 시퀀스로 변환
+                .map(Book::title)
+                .filter { it.startswith("A") }
+                .toList()    // 결과를 다시 리스트로 변환 (시퀀스는 인덱스로 접근하지 못한다)
+
+### Sequence
+
+- 임시 컬렉션을 사용하지 않고 컬렉션 연산 수행 가능
+- 코틀린 인터페이스
+- `iterator` 메소드로 원소 별 접근
+- 원소가 필요할 때 비로소 계산 (lazy)
+- ***원소가 많을 땐 시퀀스로 지연 계산하도록 하자***
+- 자바의 스트림과 같다 (안드로이드에서 자바 8미만을 사용할 경우 자바 8 스트림을 사용할 수 없다. 상황에 따라 코틀린 시퀀스, 자바 스트림 중 선택해 사용하자)
+```kotlin
+    books.asSequence()
+                .map(Book::title)               // 중간연산1
+                .filter { it.startswith("A") }  // 중간연산2
+                .toList()                       // 최종연산
+```
+- 중간 연산은 최종 연산이 호출되기 전까지 lazy 된다.
+- 최종연산인 `toList()` 가 없으면 기능이 수행되지 않는다.
+- 원소 별로 순차적으로 수행 (첫번째 원소 map() → filter() , 두번째 원소...)
+    - 컬렉션으로 함수 호출 했을 경우, map()에 대한 리스트 → filter에 대한 결과 리스트 생성
+
+```kotlin
+    listOf(1,2,3,4).asSequence()
+            .map { it * it }.find { it > 3 }
+```
+[](https://www.notion.so/71a0601c7c3e4baa8f04c17c92183e3b#0e8fef9ee72e4f6c9a52045ee0c7d3b3)
+
+- 최종연산과 중간연산 함수의 순서에 따라 수행 횟수가 달라질 수 있다.
+    - 최종연산이 `toList` 일 경우 `filter` 를 먼저 호출하면 변환 횟수가 줄어든다.
+
+### 시퀀스 만들기
+
+- `generateSequence` : 이전 원소를 파라미터로 받아 다음 원소를 계산
+```kotlin
+    // 0부터 100까지 합 구하기
+    generateSequence(0) { it + 1 }
+            .takeWhile { it <= 100 }
+            .sum() // 최종연산을 호출해야 비로소 수행
+```
+```kotlin
+    // 상위 파일을 모두 조회하며 숨김 속성을 가졌는지 검사
+    // File 클래스의 확장함수
+    fun File.isInsideHiddenDirectory() =
+            generateSequence(this) { it.parentFile }.any { it.isHidden }
+```
+
+- 객체의 조상으로 이뤄진 시퀀스가 필요할 때
+- 조상과 자신과 같은 타입일 때 (`File`의 `parentFile` 도 `File` 타입이다)
