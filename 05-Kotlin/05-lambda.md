@@ -82,3 +82,80 @@
     // age를 리턴하는 함수를 값으로 표현
     Person::age
 ```
+
+## 5.2 컬렉션 함수형  API
+
+- 컬렉션을 다루는 코틀린 표준 라이브러리(람다 문법) 몇가지
+
+### filter와 map
+```kotlin
+    val list = listOf(1, 2, 3, 4)
+    val evenList = list.filter { it % 2 == 0 }
+    
+    >>> (2, 4)
+```
+- 원치 않는 원소를 제거
+```kotlin
+    val list = listOf(1, 2, 3, 4)
+    val squareList = list.map { it * it }
+    
+    >>> (1, 4, 9, 16)
+```
+
+- 원소를 변환
+```kotlin
+    val list = listOf(1, 2, 3, 4)
+    val evenSquareList = list
+                                                .filter { it % 2 == 0 }
+                                                .map { it * it }
+    
+    >>> (4, 16)
+```
+- 연쇄호출 가능
+```kotlin
+    val list = listOf(1, 2, 3, 4)
+    // 항상 maxBy를 계산해 비효율적
+    list.filter { it == it.maxBy { it } }
+    
+    val maxElement = it.maxBy { it }
+```    list.filter { it == maxElement }
+
+### all, any, count, find
+```kotlin
+- `all` 과 `any` : 컬렉션의 **모든 원소**가 어떤 조건을 만족하는지
+- `count` : 조건을 만족하는 원소 개수
+- `find` : 조건을 만족하는 첫번째 원소 리턴
+    - 만족하는 원소가 없다면 `null` 리턴
+    - `null` 을 명시해주고 싶다면 같은 기능을 하는 `firstOrNull` 함수 사용
+
+    val list = listOf(1, 2, 3)
+    
+    // 모든 원소가 3인 것은 아니다 = 3이 아닌 원소가 하나라도 있다
+    !list.all { it == 3 }
+    
+    // 3이 아닌 원소가 하나라도 있다
+    list.any { it != 3 }
+```
+### groupBy
+
+- 컬렉션을 여러 그룹으로 나눠준다
+```kotlin
+    val list = listOf("a", "ab", "b")
+    // 동일한 첫글자로 시작하는 그룹으로 묶는다
+    list.groupBy(String::first)
+    
+    // 결과는 Map<String, List<String>>
+    >>> {"a" = ["a", "ab"], "b" = ["b"]}
+```
+### flatMap
+
+- 중첩된 컬렉션 안의 원소 처리
+```kotlin
+    class Book(val title: String, val authors: List<String>)
+
+    // books 컬렉션의 모든 저자를 가져올 수 있다 (set: 중복 없이)
+    // toSet()을 호출하지 않으면 List<String> 반환
+    books.flatMap { it.authors }.toSet()
+```
+- `flatMap` : 파라미터를 모든 원소에 적용하고, 결과를 한데 모은다
+- 리스트의 리스트의 원소를 모아야할 때 사용
