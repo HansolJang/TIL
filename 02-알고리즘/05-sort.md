@@ -50,4 +50,23 @@ if largest != i
 - 수행시간: T(n) <= T(2n / 3) + θ(1)
 	- T(2n / 3): 재귀호출된 서브트리에서 MAX-HEAPIFY을 수행하는 시간 = 서브 트리 최대 개수
 	- θ(1): 자식 노드와 값 대소 비교하는 시간
-- 마스터 정리에 의해, O(lg n)
+- 마스터 정리에 의해, O(lg n) = O(h = 트리의 높이)
+
+2. BUILD-MAX-HEAP(A)
+- 배열을 최대 힙으로 바꿔주는 프로시저
+- MAX-HEAPIFY를 바닥부터 거꾸로 순차 수행하면 최대 힙
+- 마지막 레벨의 노드(리프)들은 원소가 하나 이므로 호출하지 않아도 된다. (A[length/2 + 1]..A[length]까지 skip)
+
+BUILD-MAX-HEAP(A) = A 배열을 최대 힙으로 만드는 프로시저
+```
+A.heap-size = A.length
+for i = A.length / 2 downto 1
+	MAX-HEAPIFY(A, i)
+```
+
+- 수행시간: MAX-HEAPIFY * n 이므로 O(n lg n)
+- 더 정확히 구하면,
+	- MAX-HEAPIFY는 높이가 h인 노드에서 호출될 때 O(h)
+	- 높이가 h인 노드수: 최대 n / 2<sup>h+1</sup>
+	- 수행시간은 높이가 h인 노드수 * 높이h 의 높이별 합
+	- O(n * (h / 2<sup>h</sup>)의 합) = O(n)
