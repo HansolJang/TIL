@@ -23,3 +23,31 @@
 	- BUILD-MAX-HEAP: 정렬되지 않은 입력 배열로부터 최대 힙을 만든다. O(n)
 	- HEAPSORT: 배열 내부를 정렬한다. O(n lg n)
 	- MAX-HEAP-INSERT, HEAP-EXTRACT-MAX, HEAP-INCREASE-KEY, HEAP-MAXIMUM: 우선순위 큐 구현에 필요한 프로시저. 모두 O(lg n)
+
+1. MAX-HEAPIFY
+- 임의의 노드 값은 부모보다 클 수 없다.
+- 부모가 자식보다 작을 수 있다.
+- **값을 내려보냄**으로써 최대 힙 특성을 지킬 수 있도록 한다.
+
+MAX-HEAPIFY(A, i) = A[i] 값이 자식보다 작으면 한 레벨 내려보내는 프로시저
+```
+l = LEFT(i)
+r = RIGHT(i)
+왼쪽 자식 보다 작으면
+if l <= A.heap-size and A[l] > A[i]
+	largest = l
+else largest = i
+오른쪽 자식 보다 작으면
+if r <= A.heap.size and A[r] > A[largest]
+	largest = r
+if largest != i
+	배열 swap
+	exchange A[i] with A[largest]
+	방금 바꾼 값도 자식보다 작진 않은지 검사하기 위해 재귀호출해 i의 서브트리를 모두 검사한다
+	MAX-HEAPIFY(A, largest)
+```
+
+- 수행시간: T(n) <= T(2n / 3) + θ(1)
+	- T(2n / 3): 재귀호출된 서브트리에서 MAX-HEAPIFY을 수행하는 시간 = 서브 트리 최대 개수
+	- θ(1): 자식 노드와 값 대소 비교하는 시간
+- 마스터 정리에 의해, O(lg n)
