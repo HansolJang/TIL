@@ -70,3 +70,23 @@ for i = A.length / 2 downto 1
 	- 높이가 h인 노드수: 최대 n / 2<sup>h+1</sup>
 	- 수행시간은 높이가 h인 노드수 * 높이h 의 높이별 합
 	- O(n * (h / 2<sup>h</sup>)의 합) = O(n)
+
+3. 힙 정렬 알고리즘
+- 배열을 최대 힙으로 만든다.
+- 가장 큰 원소가 루트에 있다.
+- 루트 노드 A[1]를 힙의 가장 마지막 원소 A[n]와 바꾼다.
+- A[1..n-1] 에 대해 위를 반복한다.
+- 새로운 루트가 가장 크지 않을 수 있으므로 MAX-HEAPIFY(A, 1)를 호출한다.
+```
+BUILD-MAX-HEAP(A)
+for i = A.length downto 2
+	exchange A[1] with A[i]
+	A.heap-size = A.heap-size - 1
+	MAX-HEAPIFY(A, 1)
+```
+
+- 수행시간
+	- BUILD-MAX-HEAP = O(n)
+	- MAX-HEAPIFY(A, 1)를 (n - 1)번 실행
+	- MAX-HEAPIFY는 O(lg n)
+	- 다 합치면 O(n) + (n - 1) * O(lg n) = O(n lg n)
