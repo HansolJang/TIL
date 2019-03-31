@@ -219,3 +219,87 @@
 
 - 객체의 조상으로 이뤄진 시퀀스가 필요할 때
 - 조상과 자신과 같은 타입일 때 (`File`의 `parentFile` 도 `File` 타입이다)
+
+## 5.4 자바 함수형 인터페이스 활용
+
+- 코틀린 람다를 자바 API 에 활용하자
+1. OnClickListener
+```kotlin
+    button.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                    ...
+            }
+    })
+```
+```kotlin
+    button.setOnClickListener { view ->
+            ...
+    }
+```
+- 추상메소드가 ***1개 (SAM)***일 경우 코틀린이 람다 식을 넣을 수 있도록 지원
+    - SAM: Single Abstract Method
+
+2. Runnable
+
+- SAM을 구현한 람다를 넘길 경우 무명 인스턴스를 자동으로 만들어 준다
+- 호출할 때마다 하나의 인스턴스를 재사용한다.
+```kotlin
+    // object로 무명 객체를 만들어 사용
+    postponeComputation(1000, object : Runnalbe {
+            override fun run() {
+                    println(42)
+            }
+    })
+```
+```kotlin
+    // 람다로 인스턴스 재사용
+    postponeComputation(1000) {
+            println(42)
+    }
+```
+- Runnable에서 전달받은 변수를 사용한다면?
+```kotlin
+    fun handleComputation(id: String) {
+            postponeComputation(1000) {
+                    println(id)
+            }
+    }
+```
+- handleComputation 함수는 바로 끝나지만 Runnable에선 `id` 값을 유지해야 한다!
+```kotlin
+    class HandleComputation$1(val id: String): Runnable {
+            override fun run() {
+                    println(id)
+            }
+    }
+```
+- 위와 같이 `id` 값을 포획한 클래스를 새로 만들고, Runnable이 호출될 때 마다 이 클래스의 인스턴스를 새로 호출한다. 클래스 → 바이트코드 변환
+- 자바 8부터 람다가 도입되었기 때문에, 이후에는 자브이 람다를 활용해 클래스 없이 바이트코드를 생성하게 바뀌었다.
+- `inline` 키워드를 함수앞에 붙이면, 클래스와 인스턴스가 만들어지지 않고 바이트코드 자체로 넘어간다.
+
+### SAM 생성자
+
+- 메소드가 1개인 인터페이스를 구현하면서 인스턴스를 생성해주는 함수
+- 컴파일러가 자동 생성한 함수 (함수형인터페이스의 이름과 같다)
+- 람다 → 함수형 인터페이스의 인스턴스
+- 보통 컴파일러가 자동으로 만들고 호출하지만 안될 경우 이 생성자를 사용해 인스턴스를 만들어야함
+- 예: SAM의 인스턴스를 반환해야할 때, 인스턴스를 재사용 하고 싶을 때
+```kotlin
+    fun createAllDoneRunnable(): Runnable {     
+            return Runnable {           // 이름으로 감싸야 인스턴스가 리턴된다.
+                    println("all done")     
+            }
+    }
+```
+
+    val listener = OnClickListener {
+            ....
+    }
+    
+    button1.setOnClickListener(listener)
+    button2.setOnClickListener(listener)
+
+- 람다에는 `this` 가 없다.
+- **람다에서의 `this` 는 그 바깥 클래스를 가리킨다.**
+- `this` 가 필요한 경우 무명 객체로 구현해 사용할 것 (`object : OnClickListenr...`)
