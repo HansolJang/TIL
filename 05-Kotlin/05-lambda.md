@@ -292,14 +292,14 @@
             }
     }
 ```
-
+```kotlin
     val listener = OnClickListener {
             ....
     }
     
     button1.setOnClickListener(listener)
     button2.setOnClickListener(listener)
-
+```
 - 람다에는 `this` 가 없다.
 - **람다에서의 `this` 는 그 바깥 클래스를 가리킨다.**
 - `this` 가 필요한 경우 무명 객체로 구현해 사용할 것 (`object : OnClickListenr...`)
