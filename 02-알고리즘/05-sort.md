@@ -106,3 +106,41 @@ for i = A.length downto 2
 	- 사건 발생 순서대로 순차로 선택할 때 사용한다.
 - 실제로 응용할 때는 핸들을 정확하게 유지해야한다. (핸들: 원소 각각에 대응되어 원소를 찾게 해주는 키 같은 데이터, 예를 들어 배열의 인덱스)
 
+1. HEAP-MAXIMUM(A)
+```
+HEAP-MAXIMUM(A)
+return A[1]
+```
+- A에서 최대값을 리턴한다.
+- θ(1)
+
+2. HEAP-EXTRACT-MAX(A)
+- A에서 최댓값을 제거하고 리턴한다.
+- 마지막 노드를 첫번째 노드에 넣는다.
+- 남은 배열을 최대 힙으로 만든다.
+- MAX-HEAPIFY(A, 1) 만큼의 시간만 걸리므로 수행시간은 O(lg n)이다.
+```
+HEAP-EXTRACT-MAX(A)
+if (A.heap-size < 1)
+	error "heap underflow"
+max = A[1]
+A[1] = A[A.heap-size - 1]
+A.heap-size = A.heap-size - 1
+MAX-HEAPIFY(A, 1)
+```
+
+3. INCREASE-KEY(A, i, key)
+- 원소 x의 키 값을 k로 증가시킨다.
+- k >= x라고 가정한다. (부모와 비교해 올라가기만 하면 된다.)
+- i: 키를 증가시킬 원소가 있는 배열의 인덱스
+- 새로운 키가 들어갈 적절한 장소를 골라 끼워넣는다.
+- 최대 트리의 높이만큼 반복문이 시행되므로 수행시간은 O(lg n)이다.
+```
+INCREASE-KEY(A, i, key)
+if (key < A[i])
+	error "새로운 키가 현재보다 작다"
+A[i] = key
+while i > 1 and A[PARENT(i) < A[i]]
+	A[i] <-> A[PARENT(i)]
+	i = PARENT(i)
+```
