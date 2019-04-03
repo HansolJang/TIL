@@ -91,6 +91,43 @@ for i = A.length downto 2
 	- MAX-HEAPIFY는 O(lg n)
 	- 다 합치면 O(n) + (n - 1) * O(lg n) = O(n lg n)
 
+```kotlin
+val heap = ArrayList<Int>()
+
+    fun parent(i: Int) = i / 2
+
+    fun left(i: Int) = i * 2
+
+    fun right(i: Int) = i * 2 + 1
+
+    fun maxHeapify(i: Int) {
+        val l = left(i)
+        val r = right(i)
+        var largest = -1
+        if (l < heap.size && heap[l] > heap[i])
+            largest = l
+        else if (r < heap.size && heap[r] > heap[i])
+            largest = r
+        if (largest > -1) {
+            swap(i, largest)
+            maxHeapify(largest)
+        }
+    }
+
+    fun swap(i: Int, j: Int) {
+        if (i < heap.size && j < heap.size) {
+            heap[i] += heap[j]
+            heap[j] = heap[i] - heap[j]
+            heap[i] -= heap[j]
+        }
+    }
+
+    fun buildMaxHeap() {
+        for(i in heap.size / 2 downTo 1)
+            maxHeapify(i)
+    }
+```
+
 
 #### 우선순위 큐
 - 키 값을 가진 원소 S들의 집합
