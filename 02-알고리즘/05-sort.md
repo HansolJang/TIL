@@ -100,6 +100,7 @@ for i = A.length downto 2
 	- MAXIMUM(S): S에서 키 값이 최대인 원소를 리턴한다
 	- EXTRACT-MAX(S): S에서 키 값이 최대인 원소를 제거한다
 	- INCREASE-KEY(S, x, k): 원소 x의 키 값을 k로 증가시킨다. 이때 k는 x의 현재 키 값보다 작아지지 않는다고 가정한다.
+- 힙은 크기가 n인 집합에 대해 어떤 우선순위 큐 연산이라도 O(lg n)시간에 할 수 있다.
 - 최대 우선순위 큐는 특정 OS에서 다음 수행할 프로세스를 고를 때 사용되고 있다.
 - 최소 우선순위 큐는 INSERT, MINIMUM, EXTRACT-MIN, DECREASE-KEY 연산을 제공한다.
 	- 최소 우선순위 큐는 사건 반응형 시뮬레이터에서 사용된다.
@@ -143,4 +144,15 @@ A[i] = key
 while i > 1 and A[PARENT(i) < A[i]]
 	A[i] <-> A[PARENT(i)]
 	i = PARENT(i)
+```
+
+4. MAX-HEAP-INSERT(A, key)
+- A에 key 값을 삽입한다.
+- 우선 트리에 키값이 `-∞`인 노드를 리프에 추가하여 확장하고, INCREASE-KEY(A, i, key)를 호출해 제자리를 찾는다.
+- 마지막 노드에서 INCREASE-KEY의 반복문이 일어나는 횟수는 트리의 높이 = `log N`이므로 수행시간도 O(lg n)이다.
+```
+MAX-HEAP-INSERT(A, key)
+A.heap-size = A.heap-size + 1
+A[heap-size] = -∞
+HEAP-INCREASE-KEY(A, A.heap-size - 1, key)
 ```
