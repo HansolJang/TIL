@@ -303,3 +303,76 @@
 - 람다에는 `this` 가 없다.
 - **람다에서의 `this` 는 그 바깥 클래스를 가리킨다.**
 - `this` 가 필요한 경우 무명 객체로 구현해 사용할 것 (`object : OnClickListenr...`)
+
+## 5.5 수신 객체 지정 람다: with과 apply
+
+- 람다 본문안에서 다른 인스턴스의 메소드 호출
+
+### with 함수
+
+- 인스턴스의 이름을 반복하지 않고, 연산을 수행하자
+```kotlin
+    // with을 사용하지 않은 예제
+    fun alphabet(): String {
+            val result = StringBuilder()
+            for (letter in 'A'..'Z') {
+                    result.append(letter)
+            }
+            result.append("\nNow I know the alphabet!")
+            return result.toString()
+    }
+```
+
+- `result` 가 너무 많이 반복된다.
+```kotlin
+    // with 사용
+    fun alphabet(): String {
+            val stringBuilder = StringBuilder()
+            return with (stringBuilder) {
+                    for (letter in 'A'..'Z') {
+                            this.append(letter)                // this 명시 가능
+                    }
+                    append("\nNow I know the alphabet!")   // this 생략 가능
+                    this.toString()
+            }
+    }
+```
+
+- 1번째 파라미터: 인스턴스, 람다의 수신 객체로 사용
+- 2번째 파라미터: 수행할 연산이 담긴 람다
+- 확장함수도 수신 객체 지정 함수라고 볼 수 있다
+```kotlin
+    // 식이 본문인 함수로 리팩토링
+    fun alphabet() = with (StringBuilder()) {
+            for (letter in 'A'..'Z') {
+                    append(letter)      
+            }
+            append("\nNow I know the alphabet!")
+            toString()
+    }
+```
+
+### apply 함수
+
+- `with` 은 람다의 결과를 반환
+- `apply` 는 수신 객체를 반환
+- `apply()`  는 확장 함수이다.
+```kotlin
+    // apply 함수로 리팩토링
+    fun alphabet() = StringBuilder().apply {
+            for (letter in 'A'..'Z') {
+                    append(letter)
+            }
+            append("\nNow I know the alphabet!")
+    }.toString()
+```
+
+- 인스턴스를 생성하면서 그 인스턴스의 초기값을 설정할 때 유용하다.
+```kotlin
+    // android에서 textview를 생성하는 예제
+    val tv = TextView().apply {
+            text = "Sample text"
+            textSize = 20.0
+            setPadding(10, 0, 0, 0)
+    }
+```
