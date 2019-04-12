@@ -381,3 +381,72 @@ null 이 가능하지 않도록 하려면?
 [컬렉션 생성 함수](https://www.notion.so/fe8e8df2510f4348bb957ee40efd8976)
 
 - setOf, mapOf 를 사용하더라도 자바로 컴파일할 땐 읽기/쓰기 모두 가능한 util 클래스로 컴파일
+
+
+### 컬렉션을 플랫폼 타입으로 다루기
+
+- 자바 함수를 오버라이드할 경우
+    - 컬렉션이 널이 될 수 있는가?
+    - 컬렉션의 원소가 널이 될 수 있는가?
+    - 오버라이드하는 메소드가 컬렉션을 변경할 수 있는가?
+```java
+    // 파일에 든 텍스트를 처리하는 자바 인터페이스
+    interface FileContentProcessor {
+            void processContents(File path,
+                                                    byte[] binaryContents,
+                                                    List<String> textContents);
+    }
+```
+
+위 인터페이스를 코틀린에서 사용할 때, `List<String>` 타입에 대해 고려해야할 점
+
+- 일부 파일은 텍스트로 표현할 수 없다 → `List` Null True
+- 파일의 각 줄은 널일 수 없다 → `String` Null False
+- 이 리스트는 파일의 내용을 표현하므로 읽기전용 → Immutable `List`
+```kotlin
+    class FileIndexer : FileContentProcessor {
+            override fun processContents(path: File,
+                    binaryContents: ByteArray?,
+                    textContents: List<String>?)
+    }
+```
+
+### 객체의 배열과 원시 타입의 배열
+```kotlin
+    // 기본적인 배열 사용
+    fun main(args: Array<String>) {
+            // indices 확장함수로 인덱스에 접근
+            for (i in args.indices) {
+                    println("Argument $i is: ${args[i]}")
+            }
+    }
+    
+    
+    // 배열 선언1
+    val arr1 = arrayOf(1, 2, null)
+    
+    // 배열 선언2: size가 10이고 모든 원소가 null
+    val arr2 = arrayOfNulls<Int>(10)
+    
+    // 배열 선언3: size가 10이고 모든 원소를 -1로 초기화
+    val arr3 = Array(10) { -1 }
+    
+    // 배열 선언4: 소문자 a~z까지 배열 선언
+    val letters = Array<String>(26) { i -> ('a' + i).toString() }
+```
+
+- `Array` 의 생성자를 사용하면 제네릭과 같이 래퍼 타입의 객체가 선언된다
+- `Array<Int> = Integer[]` 이다
+- `int[]` 을 사용하고 싶다면 `IntArray` 사용해야 한다
+- 코틀린이 모든 원시타입에 대해 원시타입 배열을 제공한다. (`CharArray`, `ByteArray` 등...)
+```kotlin
+    val fiveZeros = IntArray(5)
+    
+    val fiveZerosToo = intArrayOf(0, 0, 0, 0, 0)
+    
+    val squares = IntArray(5) { i -> (i + 1) * (i + 1) }
+    
+    squares.forEachIndexed { index, element -> 
+            println("Argument $index is : $element")
+    }
+```
