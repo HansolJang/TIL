@@ -268,3 +268,29 @@ T(n) = 2T(n / 2) + θ(n)
 - 분할의 균형 정도 -> 수행 시간에 얼마나 영향을 미치는가
 ![](http://staff.ustc.edu.cn/~csli/graduate/algorithms/book6/158_b.gif)
 - 사실 얼마나 나누던 θ(n lg n)에 가깝다
+
+##### 평균적인 경우에 대한 직관적 고찰
+- 어떤 배열이 평균적으로 입력될 것인가
+- 평균적인 경우 좋은 분할 (=1/2에 가까운 분할)과 나쁜 분할(=n-1,0)이 섞여 있다
+![](http://thumbnail.egloos.net/600x0/http://pds26.egloos.com/pds/201510/19/89/a0322389_5624ed6146bd9.png)
+- 나쁜 분할과 좋은 분할이 번갈아 가면서 일어나므로 좋은 분할에 흡수
+
+##### 랜덤화된 퀵 정렬
+- 평균에 가깝게 하기위해 임의로 배열을 랜덤화하자
+- 무작위 추출
+	- 무조건 마지막 원소를 r로 정하는 것이 아니라 랜덤하게 고른 뒤에 r가 swap
+
+```
+RANDOMIZED-PARTITION
+i = RANDOM(p, r)
+A[r] <-> A[i]
+return PARTITION(A, p, r)
+```
+
+```
+RANDOMIZED-QUICKSORT(A, p, r)
+if (p < r)
+	q = RANDOMIZED-PARTITION(A, p, r)
+	RANDOMIZED-QUICKSORT(A, p, q - 1)
+	RANDOMIZED-QUICKSORT(A, q + 1, r)
+```
