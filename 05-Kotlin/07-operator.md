@@ -168,3 +168,52 @@
     
     c.contains(a)
 ```
+
+### rangeTo  관례
+
+- `..` 연산자는 `rangeTo` 에 대응된다
+```kotlin
+    start..end
+    
+    start.rangeTo(end)
+    
+    // in 연산자로 검사할 수 있는 범위를 반환
+    operator fun <T: Comparable<T>> T.rangeTo(that: T): ClosedRange<T>
+
+    val now = LocalDate.now()
+    val vacation = now..now.plusDays(10)
+    println(now.plusWeeks(1) in vacation)
+```
+### for를 위한 iterator 관례
+
+- 컬렉션에서 `iterator` 를 얻은 다음 `hasNext` 와 `next` 를 호출
+- `iterator()` 도 확장 함수로 정의 가능
+- Comparable에 rangeTo가 포함되어 있다
+```kotlin
+    operator fun CharSequence.iterator(): CharIterator
+    
+    for(c in "abc") {
+        ...
+    }
+
+    // LocalDate의 커스터마이징된 이터레이터
+    operator fun ClosedRange<LocalDate>.iterator(): Iterator<LocalDate> =
+        object : Iterator<LocalDate> {
+            
+            var current = start
+    
+            override fun hasNext() = 
+                current <= endInclusive
+            
+            override fun next() = current.apply {
+                current = plusDays(1)
+            }
+    }
+    
+    
+    val today = LocalDate.now()
+    val after1Month = today.plusMonths(1)
+    for(day in today..after1Month) {
+        ...
+    }
+```
