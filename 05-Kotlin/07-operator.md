@@ -217,3 +217,40 @@
         ...
     }
 ```
+
+## 7.4 구조 분해 선언과 component 함수
+```kotlin
+    val p = Point(10, 20)
+    val (x, y) = p
+```
+- `Point` 를 `x` , `y` 로 분해해 호출하는 것
+- `componentN` 함수에 대응된다
+```kotlin
+    val (a, b) = p
+    
+    val a = p.component1()
+    val b = p.component2()
+
+    class Point(val x: Int, val y: Int) {
+        operator fun component1() = x
+        operator fun component2() = y
+    }
+```
+- 원소가 너무 많아지면 가독성이 떨어진다
+- 코틀린은 맨 앞 **다섯 원소**에 대한 component 함수를 지원한다
+```kotlin
+    val x = listOf(1,2,3,4,5)
+    val (a, b, c, d, e) = x
+    
+    // IndexOutOfBoundsException
+    val y = listOf(1,2)
+    val (f, g, h) = y
+```
+- 변수 선언이 들어갈 수 있는 어느 위치에 사용 가능 → 루프 안에서 유용
+- 코틀린 표준 라이브러리에서 `map` 에 대한 `component1` , `component2` 를 제공하기 때문에 구조 분해 선언이 가능
+```kotlin
+    val map = mapOf("Oracle" to "Java", "JetBrains" to "Kotlin")
+    for((key, value) in map) {
+        println("$key -> $value")
+    }
+```
