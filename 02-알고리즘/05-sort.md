@@ -279,6 +279,11 @@ T(n) = 2T(n / 2) + θ(n)
 - 평균에 가깝게 하기위해 임의로 배열을 랜덤화하자
 - 무작위 추출
 	- 무조건 마지막 원소를 r로 정하는 것이 아니라 랜덤하게 고른 뒤에 r가 swap
+- 모든 입력에 대해 성능의 기댓값이 높아짐 -> Ω(n lg n)으로 줄일 수 있다
+
+더 좋게 만드는 방법은?
+- 스택의 깊이를 낮게: 꼬리재귀 사용
+- 세개의 무작위 추출된 값중 중앙값을 선택
 
 ```
 RANDOMIZED-PARTITION
@@ -294,3 +299,19 @@ if (p < r)
 	RANDOMIZED-QUICKSORT(A, p, q - 1)
 	RANDOMIZED-QUICKSORT(A, q + 1, r)
 ```
+
+### 선형 시간 정렬
+- 힙 소트, 퀵 소트와 같은 비교 정렬의 최적은 Ω(n lg n)
+
+#### 계수 정렬 (counting sort)
+- n개의 입력 원소 각각이 0부터 k 사이에 있는 정수라고 가정
+- k = O(n)일 때 계수 정렬은 θ(n)
+- 각 원소 x보다 작은 원소의 개수를 센다
+- A[1..n]: 입력
+- B[1..n]: 정렬된 출력 저장
+- C[0..k]: 임시 작업 공간 (k는 입력A에서 가장 큰 수)
+
+![](http://2.bp.blogspot.com/-TFuBFNY09jw/VZwHFKcMh4I/AAAAAAAAAuA/jMf40Fp20V8/s1600/counting_sort.png)
+
+![](https://www.myassignmenthelp.net/images/counting-sort.png)
+
