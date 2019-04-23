@@ -168,3 +168,89 @@
     
     c.contains(a)
 ```
+
+### rangeTo  관례
+
+- `..` 연산자는 `rangeTo` 에 대응된다
+```kotlin
+    start..end
+    
+    start.rangeTo(end)
+    
+    // in 연산자로 검사할 수 있는 범위를 반환
+    operator fun <T: Comparable<T>> T.rangeTo(that: T): ClosedRange<T>
+
+    val now = LocalDate.now()
+    val vacation = now..now.plusDays(10)
+    println(now.plusWeeks(1) in vacation)
+```
+### for를 위한 iterator 관례
+
+- 컬렉션에서 `iterator` 를 얻은 다음 `hasNext` 와 `next` 를 호출
+- `iterator()` 도 확장 함수로 정의 가능
+- Comparable에 rangeTo가 포함되어 있다
+```kotlin
+    operator fun CharSequence.iterator(): CharIterator
+    
+    for(c in "abc") {
+        ...
+    }
+
+    // LocalDate의 커스터마이징된 이터레이터
+    operator fun ClosedRange<LocalDate>.iterator(): Iterator<LocalDate> =
+        object : Iterator<LocalDate> {
+            
+            var current = start
+    
+            override fun hasNext() = 
+                current <= endInclusive
+            
+            override fun next() = current.apply {
+                current = plusDays(1)
+            }
+    }
+    
+    
+    val today = LocalDate.now()
+    val after1Month = today.plusMonths(1)
+    for(day in today..after1Month) {
+        ...
+    }
+```
+
+## 7.4 구조 분해 선언과 component 함수
+```kotlin
+    val p = Point(10, 20)
+    val (x, y) = p
+```
+- `Point` 를 `x` , `y` 로 분해해 호출하는 것
+- `componentN` 함수에 대응된다
+```kotlin
+    val (a, b) = p
+    
+    val a = p.component1()
+    val b = p.component2()
+
+    class Point(val x: Int, val y: Int) {
+        operator fun component1() = x
+        operator fun component2() = y
+    }
+```
+- 원소가 너무 많아지면 가독성이 떨어진다
+- 코틀린은 맨 앞 **다섯 원소**에 대한 component 함수를 지원한다
+```kotlin
+    val x = listOf(1,2,3,4,5)
+    val (a, b, c, d, e) = x
+    
+    // IndexOutOfBoundsException
+    val y = listOf(1,2)
+    val (f, g, h) = y
+```
+- 변수 선언이 들어갈 수 있는 어느 위치에 사용 가능 → 루프 안에서 유용
+- 코틀린 표준 라이브러리에서 `map` 에 대한 `component1` , `component2` 를 제공하기 때문에 구조 분해 선언이 가능
+```kotlin
+    val map = mapOf("Oracle" to "Java", "JetBrains" to "Kotlin")
+    for((key, value) in map) {
+        println("$key -> $value")
+    }
+```
