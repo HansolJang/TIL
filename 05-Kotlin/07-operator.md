@@ -254,3 +254,68 @@
         println("$key -> $value")
     }
 ```
+
+## 7.5 프로퍼티 접근자 로직 재활용: 위임 프로퍼티
+
+- 필드를 DB 테이블, 브라우저 세션, 맵 등에 저장하는 등 복잡한 로직 구현 가능
+- 인스턴스가 직접 작업을 수행하지 않고 다른 **도우미 인스턴스**(위임 객체)에 작업을 위임
+```kotlin
+    class Foo {
+        var p: Type by Delegate()
+    }
+```
+
+- `p` 접근 로직을 다른 인스턴스에 위임
+- `Delegate()` 위임할 인스턴스
+```kotlin
+    // by 연산자를 통해 컴파일러가 만들어 내는 코드
+    class Foo {
+    
+        private val delegate = Delegate()
+    
+        var p: Type
+        set(value: Type) = delegate.setValue(..., value)
+        get() = delegate.getValue(...)
+    }
+    
+    // Delegate 클래스 구현
+    class Delegate {
+        operator fun getValue(...) { ... }
+        operator fun setValue(..., value: Type) { ... }
+    }
+```
+
+### 위임 프로퍼티 사용: `by lazy()` 를 사용한 초기화 지연
+
+- 인스턴스의 일부분을 초기화하지 않고 있다가 실제로 그 부분의 값이 필요할 때 초기화
+- 항상 초기화할 필요가 없는 필드에 유용
+- Person이 작성한 이메일을 DB에서 최초 한번만 조회하는 상황
+```kotlin
+    // by lazy() 없이 backing property 로 초기화 지연 구현
+    class Person(val name: String) {
+    
+        // emails 의 위임 프로퍼티 역할 (nullable)
+        private var _emails: List<Email>? = null
+    
+        // not null
+        val emails: List<Email>
+        get() {
+            // 최초 접근 시에 DB에서 이메일 조회
+            if (_emails == null) {
+                _emails = loadEmails(this)
+            }
+            return _emails!!
+        }
+    }
+```
+- `_emails` : 값 저장 (mutable = `var`), null 가능
+- `emails` : 읽기 연산 제공( = `val`), not null
+- 이런 구현을 해야할 상황이 많지만 약간 귀찮다
+```kotlin
+    // by lazy() 로 초기화 지연 구현
+    class Person(val name: String) {
+        val emails: List<Email> by lazy { loadEmails(this) }
+    }
+```
+- `lazy()` 는 `getValue()`  의 객체를 반환한다. 람다는 초기화할 때 호출.
+- Thread safe
