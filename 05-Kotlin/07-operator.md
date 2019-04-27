@@ -319,3 +319,151 @@
 ```
 - `lazy()` 는 `getValue()`  의 객체를 반환한다. 람다는 초기화할 때 호출.
 - Thread safe
+
+### 위임 프로퍼티 컴파일 규칙
+```kotlin
+    class C {
+        var prop: Type by MyDelegate()
+    }
+    
+    val c = C()
+
+    // 컴파일러가 만들어주는 코드
+    class C {
+        private val <delegate> = MyDelegate()
+        var prop: Type
+        get() = <delegate>.getValue(this, <property>)
+        set(value: Type) = <delegate>.setValue(this, <property>, value)
+    }
+```
+
+### 위임 프로퍼티 구현
+
+- 객체 필드의 값이 바뀌면 UI도 업데이트
+- 자바의 `PropertyChangeSupport` (리스너 목록 관리), `PropertyChangeEvent` (이벤트가 들어오면 리스너에 통지)
+- 단계별로 리팩토링 해보자
+```kotlin
+    // 리스너 등록/해지
+    open class PropertyChangeAware {
+        protected val changeSupport = PropertyChangeSupport(this)
+        fun addPropertyChangeListener(listener: PropertyChangeListener) {
+            changeSupport.addPropertyChangeListener(listener)
+        }
+        fun removePropertyChangeListener(listener: PropertyChangeListener) {
+            changeSupport.removePropertyChangeListener(listener)
+        }
+    }
+```
+- 사람의 나이와 급여가 바뀔 때 리스너에게 이벤트 통지
+```kotlin
+    class Person(
+        val name: String, age: Int, salary: Int): PropertyChangeAware() {
+        
+        var age: Int = age
+        set(newValue) {
+            val oldValue = field
+            field = newValue
+            // 리스너에게 이벤트 통지
+            changeSupport.firePropertyChange("age", oldValue, newValue)
+        }
+    
+        var salary = salary
+        set(newValue) {
+            val oldValue = field
+            field = newValue
+            // 리스너에게 이벤트 통지
+            changeSupport.firePropertyChange("salary", oldValue, newValue)
+        }
+    }
+
+    // 화면에서 사용할 때
+    val p = Person("Dmitry", 34, 2000)
+    p.addPropertyChangeListener(
+        PropertyChangeListener { event ->
+            // ... do something
+            // UI 갱신
+        }
+    )
+    p.age = 35
+    p.salary = 2100
+```
+### 리팩토링 step1.
+
+- 세터코드의 중복이 있다
+- 프로퍼티의 값을 저장하고 필요에 따라 통지해주는 클래스를 분리
+```kotlin
+    // 프로퍼티 저장 + 이벤트 통지
+    class ObservableProperty(
+        val propName: String, var propValue: Int,
+        val changeSupport: PropertyChangeSupport
+    ) {
+        fun getValue(): Int = propValue
+        fun setValue(newValue: Int) {
+            val oldValue = propValue
+            propValue = newValue
+            changeSupport.firePropertyChange(propName, oldValue, newValue)
+        }
+    }
+    
+    class Person(
+        val name: String, age: Int, salary: Int
+    ) : PropertyChangeAware() {
+    
+        val _age = ObservableProperty("age", age, changeSupport)
+        var age: Int
+            get() = _age.getValue()
+            set(value) { _age.setValue(value) }
+    
+        val _salary = ObservableProperty("salary", salary, changeSupport)
+        var salary: Int
+            get() = _salary.getValue()
+            set(value) { _salary.setValue(value) }
+    }
+```
+### 리팩토링 step2.
+
+- 필드 각각 `ObservableProperty` 만들고, 게터, 세터를 구현해야함
+- 필드 각각 `backing property` 필요 → 위임 프로퍼티를 사용하자
+```kotlin
+    class ObservableProperty(
+        var propValue: Int, val changeSupport: PropertyChangeSupport
+    ) {
+        operator fun getValue(p: Person, prop: KProperty<*>): Int = propValue
+    
+        operator fun setValue(p: Person, prop: KProperty<*>, newValue: Int) {
+            val oldValue = propValue
+            propValue = newValue
+            changeSupport.firePropertyChange(prop.name, oldValue, newValue)
+        }
+    }
+    
+    class Person(
+        val name: String, age: Int, salary: Int
+    ) : PropertyChangeAware() {
+    
+        var age: Int by ObservableProperty(age, changeSupport)
+        var salary: Int by ObservableProperty(salary, changeSupport)
+    }
+```
+- `operator fun` 으로 getValue, setValue 함수 재정의
+- `KProperty` : 코틀린이 프로퍼티를 표현하는 방법. 리플렉션 사용해 [`Kproperty.name`](http://kproperty.name) 으로 해당 프로퍼티 접근 (10장)
+- `KProperty` 사용했으므로 주생성자의 `propName` 삭제
+
+### 코틀린 표준라이브러리 사용
+
+- `ObservableProperty` 말고 코틀린이 제공해주는 클래스가 있다.
+- `PropertyChangeSupport` (이벤트 통지/리스너관리) 와 연결되어있지 않아서 `PropertyChangeSupport`  를 사용하는 방법을 알려주는 람다를 함께 넘겨줘야 한다.
+```kotlin
+    class Person(
+        val name: String, age: Int, salary: Int
+    ) : PropertyChangeAware() {
+    
+        private val observer = {
+            prop: KProperty<*>, oldValue: Int, newValue: Int ->
+            changeSupport.firePropertyChange(prop.name, oldValue, newValue)
+        }
+    
+        var age: Int by Delegates.observable(age, observer)
+        var salary: Int by Delegates.observable(salary, observer)
+    }
+```
