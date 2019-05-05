@@ -354,3 +354,27 @@ for i = 1 to d
 - 입력이 균일하고 독립적으로 만들어졌다고 가정
 - 버킷에 담긴 원소들이 한쪽에 쏠리지 않고 균등에 가깝게 분포 -> 버킷마다의 정렬 시간을 O(1)로 줄이자
 ![](http://www2.hawaii.edu/~nodari/teaching/f15/Notes/Topic-10/pseudocode-bucket-sort.jpg)
+
+![](http://i.stack.imgur.com/3I54p.png)
+- 버킷 정렬 초기화 = O(n)
+- 각 원소 버킷에 넣기 = O(n)
+- 버킷별 삽입 정렬 = θ(n)
+- 버킷 결과 잇기 = O(n)
+
+- 버킷별 삽입 정렬 = 버킷별 원소 개수<sup>2</sup>
+- 버킷별 원소 개수<sup>2</sup>의 기댓값은 `2 - 1/n`이다
+
+```kotlin
+fun bucketSort(A: List<Double>) {
+	val size = A.size
+	val bucket = Array<ArrayList<Double>>(size) { ArrayList() }
+	A.forEachIndexed { index, t ->
+	    bucket[Math.floor(size.toDouble() * A[index]).toInt()]
+	}
+	bucket.forEach {
+	it.insertionSort { d1, d2 -> d1 > d2 } }
+	for(i in 1 until size) {
+	    bucket[0].addAll(bucket[i])
+    }
+}
+```
